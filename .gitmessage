@@ -1,0 +1,35 @@
+type(scope): subject
+
+# ------------------------------
+# TYPES
+# ------------------------------
+# feat     → New feature
+# fix      → Bug fix
+# refactor → Code change (no feature or bug fix)
+# test     → Adding or updating tests
+# chore    → Maintenance / tooling / dependencies
+# docs     → Documentation changes
+
+# ------------------------------
+# FORMAT
+# ------------------------------
+# type(scope): short summary (max 72 characters)
+#
+# Optional body:
+# - Explain WHY the change was made
+# - Explain important implementation details
+# - Mention side effects if any
+#
+# Optional footer:
+# - Closes #123
+# - BREAKING CHANGE: explanation
+#
+# ------------------------------
+# EXAMPLE
+# ------------------------------
+# feat(auth): add sanctum token authentication
+#
+# Implemented token-based authentication using Laravel Sanctum.
+# Added middleware protection for API routes.
+#
+# Closes #12
