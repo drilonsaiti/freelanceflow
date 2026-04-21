@@ -4,7 +4,7 @@ namespace App\Domain\Proposal\Listeners;
 
 use Illuminate\Support\Facades\Log;
 
-class ProposalAcceptedListener
+class LogProposalAcceptedListener
 {
 
     public function handle(\App\Domain\Proposal\Events\ProposalAccepted $event): void

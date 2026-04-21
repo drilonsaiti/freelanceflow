@@ -3,6 +3,7 @@
 namespace App\Application\Proposal\Actions;
 
 use App\Domain\Project\Enums\ProjectStatus;
+use App\Domain\Project\Exceptions\InvalidProjectTransitionException;
 use App\Domain\Proposal\DTOs\AcceptProposalDTO;
 use App\Domain\Proposal\Enums\ProposalStatus;
 use App\Domain\Proposal\Events\ProposalAccepted;
@@ -25,7 +26,7 @@ final class AcceptProposalAction
                 ->firstOrFail();
 
             if (!$project->status->canTransitionTo(ProjectStatus::InProgress)) {
-                throw new \Exception('Project cannot move to InProgress from current state.');
+                throw new InvalidProjectTransitionException();
             }
 
             $proposal->update(['status' => ProposalStatus::Accepted]);
