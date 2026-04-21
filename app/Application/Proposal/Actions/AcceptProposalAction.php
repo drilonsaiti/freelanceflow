@@ -20,14 +20,24 @@ final class AcceptProposalAction
                 ->pending()
                 ->firstOrFail();
 
+            $project = Project::query()
+                ->where('id', $proposal->project_id)
+                ->firstOrFail();
+
+            if (!$project->status->canTransitionTo(ProjectStatus::InProgress)) {
+                throw new \Exception('Project cannot move to InProgress from current state.');
+            }
+
             $proposal->update(['status' => ProposalStatus::Accepted]);
 
             Proposal::where('project_id', $dto->projectId)
                 ->whereNot('id', $proposal->id)
                 ->update(['status' => ProposalStatus::Rejected]);
 
-            Project::where('id', $dto->projectId)->update(['status' => ProjectStatus::InProgress]);
 
+            $project->update([
+                'status' => ProjectStatus::InProgress
+            ]);
             event(new ProposalAccepted($proposal));
         });
     }
