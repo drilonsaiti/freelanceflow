@@ -1,6 +1,8 @@
 <?php
 
 use App\Interfaces\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Interfaces\Http\Controllers\Api\V1\ProjectController;
+use App\Interfaces\Http\Controllers\Api\V1\ProposalController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -9,5 +11,21 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('auth/logout', [AuthController::class, 'logout'])->name('api.v1.auth.logout');
+
+        /** Projects */
+        Route::get('projects', [ProjectController::class, 'index'])
+            ->name('api.v1.projects.index');
+        Route::post('projects', [ProjectController::class, 'store'])
+            ->name('api.v1.projects.store');
+        Route::get('projects/{project:ulid}', [ProjectController::class, 'show'])
+            ->name('api.v1.projects.show');
+
+        /** Proposals */
+        Route::get('projects/{project:ulid}/proposals', [ProposalController::class, 'index'])
+            ->name('api.v1.projects.proposals.index');
+        Route::post('projects/{project:ulid}/proposals', [ProposalController::class, 'store'])
+            ->name('api.v1.projects.proposals.store');
+        Route::patch('projects/{project:ulid}/proposals/{proposal:ulid}/accept', [ProposalController::class, 'accept'])
+            ->name('api.v1.projects.proposals.accept');
     });
 });

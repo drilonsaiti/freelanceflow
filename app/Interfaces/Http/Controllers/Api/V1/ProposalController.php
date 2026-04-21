@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Interfaces\Http\Controllers\Api\V1;
+
+use App\Application\Proposal\Actions\AcceptProposalAction;
+use App\Application\Proposal\Actions\SubmitProposalAction;
+use App\Domain\Proposal\DTOs\AcceptProposalDTO;
+use App\Domain\Proposal\DTOs\CreateProposalDTO;
+use App\Domain\Proposal\DTOs\UpdateProposalStatusDTO;
+use App\Interfaces\Http\Requests\SubmitProposalRequest;
+use App\Interfaces\Http\Resources\ProposalResource;
+use App\Models\Project;
+use App\Models\Proposal;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class ProposalController
+{
+
+    use AuthorizesRequests;
+
+    public function index(Project $project)
+    {
+        $this->authorize('view', $project);
+
+        $proposals = $project->proposals()->with('freelancer')->get();
+
+        return response()->json([
+            'data' => ProposalResource::collection($proposals),
+            'message' => 'Proposals retrieved successfully'
+        ]);
+    }
+
+    public function store(SubmitProposalRequest $request,Project $project,SubmitProposalAction $submitProposalAction)
+    {
+        $this->authorize('create',[Proposal::class,$project]);
+
+        $result = $submitProposalAction->execute(CreateProposalDTO::from([
+            ...$request->validated(),
+            'project_id' => $project->id,
+            'freelancer_id' => $request->user()->id,
+        ]));
+
+        return response()->json([
+            'data' => ProposalResource::make($result),
+            'message' => 'Proposal submitted successfully'
+        ]);
+    }
+
+    public function accept(
+        Project $project,
+        Proposal $proposal,
+        AcceptProposalAction $acceptProposalAction
+    ): JsonResponse {
+        $this->authorize('accept', $project);
+
+        $acceptProposalAction->execute(new AcceptProposalDTO(
+            proposalId: $proposal->id,
+            projectId: $project->id,
+        ));
+
+        return response()->json(['message' => 'Proposal accepted successfully']);
+    }
+}
