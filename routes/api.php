@@ -1,6 +1,7 @@
 <?php
 
 use App\Interfaces\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Interfaces\Http\Controllers\Api\V1\ContractController;
 use App\Interfaces\Http\Controllers\Api\V1\ProjectController;
 use App\Interfaces\Http\Controllers\Api\V1\ProposalController;
 use Illuminate\Support\Facades\Route;
@@ -27,5 +28,11 @@ Route::prefix('v1')->group(function () {
             ->name('api.v1.projects.proposals.store');
         Route::patch('projects/{project:ulid}/proposals/{proposal:ulid}/accept', [ProposalController::class, 'accept'])
             ->name('api.v1.projects.proposals.accept');
+
+        /** Contracts */
+        Route::get('contracts', [ContractController::class, 'index'])
+            ->name('api.v1.contracts.index');
+        Route::get('contracts/{contract:ulid}', [ContractController::class, 'show'])
+            ->name('api.v1.contracts.show');
     });
 });
