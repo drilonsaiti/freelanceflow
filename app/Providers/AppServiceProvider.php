@@ -21,8 +21,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
-        Event::discover([
+        /*Event::discover([
             app_path('Domain'),
-        ]);
+        ]);*/
     }
 }
