@@ -14,10 +14,10 @@ final class CreateProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:190'],
+            'title' => ['required', 'string', 'max:190'],
             'description' => ['nullable', 'string', 'max:190'],
-            'budget_min' => ['nullable', 'numeric', 'min:0'],
-            'budget_max' => ['nullable', 'numeric', 'min:0'],
+            'budgetMin' => ['nullable', 'numeric', 'min:0'],
+            'budgetMax' => ['nullable', 'numeric', 'min:0'],
             'status' => ['required', 'string', 'in:draft,open,in_progress,completed,cancelled'],
             'visibility' => ['required', 'string', 'in:public,private,invite_only'],
             'category' => ['nullable', 'string', 'max:190'],

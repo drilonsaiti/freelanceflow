@@ -30,10 +30,10 @@ class ContractObserver
                 'subject_type' => Contract::class,
                 'subject_id'   => $contract->id,
                 'event'        => 'status_changed',
-                'properties'   => json_encode([
+                'properties'   => [
                     'old_status' => $contract->getOriginal('status'),
                     'new_status' => $contract->status->value,
-                ]),
+                ],
             ]);
         }
     }

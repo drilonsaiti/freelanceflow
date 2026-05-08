@@ -14,9 +14,9 @@ final class SubmitProposalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cover_letter' => ['required', 'string', 'max:5000'],
-            'proposed_rate' => ['required', 'numeric', 'min:0'],
-            'estimated_days' => ['required', 'numeric', 'min:0'],
+            'coverLetter' => ['required', 'string', 'max:5000'],
+            'proposedRate' => ['required', 'numeric', 'min:0'],
+            'estimatedDays' => ['required', 'numeric', 'min:0'],
         ];
     }
 

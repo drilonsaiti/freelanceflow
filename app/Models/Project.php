@@ -4,14 +4,28 @@ namespace App\Models;
 
 use App\Domain\Project\Enums\ProjectStatus;
 use App\Domain\Project\Enums\ProjectVisibility;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class Project extends Model
 {
     //
+    use HasFactory;
+
+    protected $fillable = [
+        'ulid',
+        'client_id',
+        'title',
+        'description',
+        'budget_min',
+        'budget_max',
+        'required_skills',
+        'status',
+        'visibility',
+    ];
 
     protected $casts = [
         'status' => ProjectStatus::class,

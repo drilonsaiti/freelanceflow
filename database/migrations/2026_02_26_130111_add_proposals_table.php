@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('cover_letter');
             $table->decimal('proposed_rate', 10, 2);
             $table->integer('estimated_days');
-            $table->enum('status',['pending','accept','rejected','withdrawn'])->default('pending');
+            $table->enum('status',['pending','accepted','rejected','withdrawn'])->default('pending');
             $table->text('client_note')->nullable();
             $table->timestamps();
             $table->softDeletes();

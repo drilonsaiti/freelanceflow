@@ -14,6 +14,7 @@ use App\Models\Proposal;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Log;
 
 class ProposalController
 {
@@ -38,14 +39,14 @@ class ProposalController
 
         $result = $submitProposalAction->execute(CreateProposalDTO::from([
             ...$request->validated(),
-            'project_id' => $project->id,
-            'freelancer_id' => $request->user()->id,
+            'projectId' => $project->id,
+            'freelancerId' => $request->user()->id,
         ]));
 
         return response()->json([
             'data' => ProposalResource::make($result),
             'message' => 'Proposal submitted successfully'
-        ]);
+        ],201);
     }
 
     public function accept(

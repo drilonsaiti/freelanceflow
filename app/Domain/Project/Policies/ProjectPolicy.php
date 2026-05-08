@@ -6,6 +6,7 @@ use App\Domain\Identity\Enums\UserRole;
 use App\Domain\Project\Enums\ProjectVisibility;
 use App\Models\Project;
 use App\Models\User;
+use Log;
 
 class ProjectPolicy
 {

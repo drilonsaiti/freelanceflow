@@ -19,7 +19,9 @@ final class RegisterRequest extends FormRequest
     {
         return [
             'name' => 'required|string|min:2|max:120',
-            'email' => 'required|string|email:rfc,dns|max:190|unique:users,email',
+            /*            'email' => 'required|string|email:rfc,dns|max:190|unique:users,email',
+*/
+            'email' => 'required|string|max:190|unique:users,email',
             'password' => ['required','string',Password::min(8)->letters()->numbers(),'confirmed'],
             'role' => ['sometimes', new Enum(UserRole::class)],
         ];

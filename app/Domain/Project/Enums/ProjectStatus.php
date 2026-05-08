@@ -24,10 +24,10 @@ enum ProjectStatus: string
     public function canTransitionTo(self $new): bool
     {
         return match ($this) {
-            self::Draft => in_array($new,[self::Open,self::InProgress]),
-            self::Open => in_array($new,[self::InProgress,self::Completed,self::Cancelled]),
-            self::InProgress => in_array($new,[self::Completed,self::Cancelled]),
-            self::Completed => false,
+            self::Draft => in_array($new,[self::Open,self::InProgress],true),
+            self::Open => in_array($new,[self::InProgress,self::Completed,self::Cancelled],true),
+            self::InProgress => in_array($new,[self::Completed,self::Cancelled],true),
+            self::Completed,
             self::Cancelled => false,
         };
     }

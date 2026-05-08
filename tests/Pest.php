@@ -1,47 +1,53 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Test Case
-|--------------------------------------------------------------------------
-|
-| The closure you provide to your test functions is always bound to a specific PHPUnit test
-| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "pest()" function to bind a different classes or traits.
-|
-*/
+use App\Domain\Identity\Enums\UserRole;
+use App\Models\Contract;
+use App\Models\Project;
 
-pest()->extend(Tests\TestCase::class)
- // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature');
-
-/*
-|--------------------------------------------------------------------------
-| Expectations
-|--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
-*/
+uses(Tests\TestCase::class)->in('Feature');
+uses(Tests\TestCase::class)->in('Unit');
 
 expect()->extend('toBeOne', function () {
     return $this->toBe(1);
 });
 
-/*
-|--------------------------------------------------------------------------
-| Functions
-|--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
-*/
-
 function something()
 {
     // ..
+}
+
+function makeUser(string $role = 'freelancer'): \App\Models\User
+{
+    return \App\Models\User::factory()->create([
+        'role' => \App\Domain\Identity\Enums\UserRole::from($role),
+    ]);
+}
+
+function createAcceptedContract(): array
+{
+    $client = makeUser(UserRole::Client->value);
+    $freelancer = makeUser(UserRole::Freelancer->value);
+
+    $project = Project::factory()->create([
+        'status' => 'open',
+        'visibility' => 'public',
+        'client_id' => $client->id,
+    ]);
+
+    $proposalResponse = test()->actingAs($freelancer)
+        ->postJson("api/v1/projects/{$project->ulid}/proposals", [
+            'proposedRate'  => 1000,
+            'estimatedDays' => 10,
+            'coverLetter'   => 'Test proposal',
+        ]);
+
+    test()->actingAs($client)
+        ->patchJson("api/v1/projects/{$project->ulid}/proposals/{$proposalResponse->json('data.id')}/accept");
+
+    return [
+        'client'     => $client,
+        'freelancer' => $freelancer,
+        'project'    => $project,
+        'contract'   => Contract::where('project_id', $project->id)->first(),
+    ];
 }

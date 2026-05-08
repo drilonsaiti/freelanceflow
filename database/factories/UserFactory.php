@@ -32,6 +32,20 @@ class UserFactory extends Factory
         ];
     }
 
+    public function client(): static
+    {
+        return $this->state(fn () => [
+            'role' => 'client',
+        ]);
+    }
+
+    public function freelancer(): static
+    {
+        return $this->state(fn () => [
+            'role' => 'freelancer',
+        ]);
+    }
+
     /**
      * Indicate that the model's email address should be unverified.
      */

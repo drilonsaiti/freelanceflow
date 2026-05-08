@@ -3,13 +3,25 @@
 namespace App\Models;
 
 use App\Domain\Proposal\Enums\ProposalStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class Proposal extends Model
 {
-    //
+    use HasFactory;
+
+    protected $fillable = [
+        'ulid',
+        'project_id',
+        'freelancer_id',
+        'status',
+        'cover_letter',
+        'proposed_rate',
+        'estimated_days',
+        'client_note'
+    ];
 
     protected $casts = [
         'status' => ProposalStatus::class,

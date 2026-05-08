@@ -9,7 +9,7 @@ use App\Interfaces\Http\Requests\CreateProjectRequest;
 use App\Interfaces\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-
+use Illuminate\Support\Facades\Gate;
 class ProjectController extends Controller
 {
     use AuthorizesRequests;
@@ -36,13 +36,12 @@ class ProjectController extends Controller
     public function store(CreateProjectRequest $request,CreateProjectAction $createProjectAction){
         $this->authorize('create', Project::class);
 
-
         $result = $createProjectAction->execute(CreateProjectDTO::from($request->validated()));
 
         return response()->json([
             'data' => ProjectResource::make($result),
             'message' => 'Project created successfully'
-        ]);
+        ],201);
     }
 
 }

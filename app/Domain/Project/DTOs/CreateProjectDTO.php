@@ -10,7 +10,7 @@ final class CreateProjectDTO extends Data
 {
 
     public function __construct(
-        public readonly string $name,
+        public readonly string $title,
         public readonly ?string $description,
         public readonly ?float $budgetMin,
         public readonly ?float $budgetMax,

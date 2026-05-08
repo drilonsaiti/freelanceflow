@@ -13,7 +13,7 @@ final class CreateProposalDTO extends Data
         public readonly string $coverLetter,
         public readonly float $proposedRate,
         public readonly int $estimatedDays,
-        public readonly ProposalStatus $status,
+        public readonly ?ProposalStatus $status,
         public readonly ?string $clientNote,
     ){}
 

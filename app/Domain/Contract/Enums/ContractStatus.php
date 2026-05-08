@@ -22,13 +22,31 @@ enum ContractStatus: string
         };
     }
 
-    public function canTransitionTo(self $new): bool{
-        return match($this){
-            self::Draft => in_array($new,[self::Active,self::Paused]),
-            self::Active => in_array($new,[self::Paused,self::Completed,self::Disputed,self::Cancelled]),
-            self::Paused => in_array($new,[self::Active,self::Completed,self::Disputed,self::Cancelled]),
-            self::Completed => false,
-            self::Disputed => false,
+    public function canTransitionTo(self $new): bool
+    {
+        return match ($this) {
+
+            self::Draft => in_array($new, [
+                self::Active,
+                self::Paused,
+            ], true),
+
+            self::Active => in_array($new, [
+                self::Paused,
+                self::Completed,
+                self::Disputed,
+                self::Cancelled,
+            ], true),
+
+            self::Paused => in_array($new, [
+                self::Active,
+                self::Completed,
+                self::Disputed,
+                self::Cancelled,
+            ], true),
+
+            self::Completed,
+            self::Disputed,
             self::Cancelled => false,
         };
     }

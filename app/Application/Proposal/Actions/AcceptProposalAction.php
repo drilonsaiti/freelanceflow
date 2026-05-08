@@ -10,6 +10,7 @@ use App\Domain\Proposal\Events\ProposalAccepted;
 use App\Models\Project;
 use App\Models\Proposal;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 final class AcceptProposalAction
 {
@@ -17,9 +18,13 @@ final class AcceptProposalAction
     public function execute(AcceptProposalDTO $dto): void
     {
         DB::transaction(function () use ($dto) {
-            $proposal = Proposal::where('id', $dto->proposalId)
-                ->pending()
-                ->firstOrFail();
+            $proposal = Proposal::findOrFail($dto->proposalId);
+
+            if ($proposal->status !== ProposalStatus::Pending) {
+                throw ValidationException::withMessages([
+                    'proposal' => 'Only pending proposals can be accepted.',
+                ]);
+            }
 
             $project = Project::query()
                 ->where('id', $proposal->project_id)

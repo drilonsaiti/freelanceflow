@@ -6,6 +6,7 @@ use App\Application\Contract\Actions\CreateContractAction;
 use App\Domain\Contract\DTOs\CreateContractDTO;
 use App\Domain\Contract\Enums\RateType;
 use App\Domain\Proposal\DTOs\AcceptProposalDTO;
+use Log;
 
 class ProposalAcceptedListener
 {
