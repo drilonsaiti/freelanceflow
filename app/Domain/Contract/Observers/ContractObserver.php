@@ -2,9 +2,11 @@
 
 namespace App\Domain\Contract\Observers;
 
+use App\Domain\Contract\Events\ContractStatusUpdated;
 use App\Domain\Contract\Jobs\SendContractCreatedNotification;
 use App\Models\ActivityLog;
 use App\Models\Contract;
+use Illuminate\Support\Facades\Cache;
 
 class ContractObserver
 {
@@ -19,6 +21,7 @@ class ContractObserver
         ]);
 
         SendContractCreatedNotification::dispatch($contract);
+        $this->clearCache($contract->freelancer_id,$contract->client_id);
 
     }
 
@@ -35,7 +38,16 @@ class ContractObserver
                     'new_status' => $contract->status->value,
                 ],
             ]);
+
+            event(new ContractStatusUpdated($contract));
+
+            $this->clearCache($contract->freelancer_id,$contract->client_id);
         }
+    }
+
+    private function clearCache(int $freelancer_id,int $client_id): void {
+        Cache::forget("contracts.user.{$freelancer_id}");
+        Cache::forget("contracts.user.{$client_id}");
     }
 
 }

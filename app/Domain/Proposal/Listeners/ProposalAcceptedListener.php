@@ -15,6 +15,7 @@ class ProposalAcceptedListener
 
     public function handle(\App\Domain\Proposal\Events\ProposalAccepted $event): void
     {
+        Log::info('Proposal accepted and contract created');
         $dto = new CreateContractDTO(
             $event->proposal->project_id,
             $event->proposal->freelancer_id,

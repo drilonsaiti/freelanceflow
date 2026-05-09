@@ -23,9 +23,21 @@ class ProposalController
 
     public function index(Project $project)
     {
-        $this->authorize('view', $project);
+        $this->authorize('viewAny', [Proposal::class, $project]);
 
         $proposals = $project->proposals()->with('freelancer')->get();
+
+        return response()->json([
+            'data' => ProposalResource::collection($proposals),
+            'message' => 'Proposals retrieved successfully'
+        ]);
+    }
+
+    public function myProposals(Project $project)
+    {
+        $this->authorize('viewMine', [Proposal::class, $project]);
+
+        $proposals = $project->proposals()->forFreelancer()->get();
 
         return response()->json([
             'data' => ProposalResource::collection($proposals),
@@ -54,7 +66,7 @@ class ProposalController
         Proposal $proposal,
         AcceptProposalAction $acceptProposalAction
     ): JsonResponse {
-        $this->authorize('accept', $project);
+        $this->authorize('accept', $proposal);
 
         $acceptProposalAction->execute(new AcceptProposalDTO(
             proposalId: $proposal->id,

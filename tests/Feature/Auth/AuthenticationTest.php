@@ -189,3 +189,45 @@ it('cannot logout without token', function () {
 
     $response->assertStatus(401);
 });
+
+it('blocks login after 5 failed attempts', function () {
+
+    $this->postJson('/api/v1/auth/register', [
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+    ])->assertCreated();
+
+    for ($i = 1; $i <= 4; $i++) {
+        $this->postJson('/api/v1/auth/login', [
+            'email' => 'john@example.com',
+            'password' => 'WrongPassword123!',
+        ])->assertStatus(401);
+    }
+
+    $this->postJson('/api/v1/auth/login', [
+        'email' => 'john@example.com',
+        'password' => 'WrongPassword123!',
+    ])
+        ->assertStatus(429)
+        ->assertJsonStructure([
+            'message',
+        ]);
+});
+
+it('allows requests within rate limit', function () {
+    $this->postJson('/api/v1/auth/register', [
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+    ])->assertCreated();
+
+    for ($i = 1; $i <= 4; $i++) {
+        $this->postJson('/api/v1/auth/login', [
+            'email' => 'john@example.com',
+            'password' => 'WrongPassword123!',
+        ])->assertStatus(401);
+    }
+});

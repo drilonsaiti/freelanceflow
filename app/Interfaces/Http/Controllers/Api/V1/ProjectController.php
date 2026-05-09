@@ -3,6 +3,7 @@
 namespace App\Interfaces\Http\Controllers\Api\V1;
 
 use App\Application\Project\Actions\CreateProjectAction;
+use App\Application\Project\Queries\GetOpenProjectsQuery;
 use App\Domain\Project\DTOs\CreateProjectDTO;
 use App\Http\Controllers\Controller;
 use App\Interfaces\Http\Requests\CreateProjectRequest;
@@ -14,9 +15,9 @@ class ProjectController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index()
+    public function index(GetOpenProjectsQuery $getOpenProjectsQuery)
     {
-        $projects = Project::open()->with('client')->get();
+        $projects = $getOpenProjectsQuery->handle();
         return response()->json([
             'data' => ProjectResource::collection($projects),
             'message' => 'Projects retrieved successfully'

@@ -2,6 +2,8 @@
 
 namespace Contracts;
 
+use App\Domain\Contract\Enums\ContractStatus;
+use App\Domain\Contract\Events\ContractStatusUpdated;
 use App\Domain\Contract\Jobs\SendContractCreatedNotification;
 use App\Domain\Identity\Enums\UserRole;
 use App\Infrastructure\Mail\ContractCreatedClientMail;
@@ -9,6 +11,8 @@ use App\Infrastructure\Mail\ContractCreatedFreelancerMail;
 use App\Models\Contract;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 
 uses(RefreshDatabase::class);
@@ -103,3 +107,36 @@ it('mail is sent to client when contract is created', function () {
     });
 });
 
+it('invalidates contract cache when contract is created',function (){
+    Cache::spy();
+
+    $contract = Contract::factory()->create();
+
+    Cache::shouldHaveReceived('forget')
+    ->with("contracts.user.{$contract->client_id}")
+    ->once();
+
+    Cache::shouldHaveReceived('forget')
+        ->with("contracts.user.{$contract->freelancer_id}")
+        ->once();
+});
+it('broadcasts ContractStatusUpdated when contract status changes',function (){
+    Event::fake([
+        ContractStatusUpdated::class,
+    ]);
+
+    $contract = Contract::factory()->create([
+        'status' => ContractStatus::Active
+    ]);
+
+    $contract->update([
+        'status' => ContractStatus::Completed
+    ]);
+
+    Event::assertDispatched(ContractStatusUpdated::class, function (ContractStatusUpdated $event) use ($contract) {
+        return $event->contract->id === $contract->id &&
+            $event->broadcastAs() === 'contract.status.updated' &&
+            $event->broadcastWith()['status'] === 'completed' &&
+            $event->broadcastWith()['label'] === 'Completed';
+    });
+});
