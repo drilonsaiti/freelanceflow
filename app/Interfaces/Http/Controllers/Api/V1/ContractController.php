@@ -2,6 +2,7 @@
 
 namespace App\Interfaces\Http\Controllers\Api\V1;
 
+use App\Application\Contract\Queries\GetUserContractsQuery;
 use App\Domain\Identity\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Interfaces\Http\Resources\ContractResource;
@@ -12,21 +13,13 @@ class ContractController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index()
+    public function index(GetUserContractsQuery $getUserContractsQuery)
     {
         $this->authorize('viewAny',Contract::class);
 
         $user = auth()->user();
 
-        $contracts = match($user->role){
-            UserRole::Freelancer => Contract::forFreelancer($user->id)
-                ->with(['project','client','freelancer','proposal'])
-                ->get(),
-            UserRole::Client     => Contract::forClient($user->id)
-                ->with(['project','client','freelancer','proposal'])
-                ->get(),
-            default              => collect(),
-        };
+        $contracts = $getUserContractsQuery->handle($user);
 
         return response()->json([
             'data' => ContractResource::collection($contracts),

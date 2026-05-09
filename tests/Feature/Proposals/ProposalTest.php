@@ -171,7 +171,7 @@ it('freelancer cannot view proposals on a project they do not own',function () {
 
     $response->assertCreated();
 
-    $response2 = $this->actingAs($freelancer2)->getJson("api/v1/projects/{$project->ulid}/proposals");
+    $response2 = $this->actingAs($freelancer2)->getJson("api/v1/projects/{$project->ulid}/my-proposals");
 
     $response2->assertForbidden();
 

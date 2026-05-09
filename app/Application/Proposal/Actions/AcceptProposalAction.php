@@ -9,6 +9,7 @@ use App\Domain\Proposal\Enums\ProposalStatus;
 use App\Domain\Proposal\Events\ProposalAccepted;
 use App\Models\Project;
 use App\Models\Proposal;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -46,5 +47,7 @@ final class AcceptProposalAction
             ]);
             event(new ProposalAccepted($proposal));
         });
+
+        Cache::forget('projects.open');
     }
 }
