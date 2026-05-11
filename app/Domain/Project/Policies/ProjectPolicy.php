@@ -3,6 +3,7 @@
 namespace App\Domain\Project\Policies;
 
 use App\Domain\Identity\Enums\UserRole;
+use App\Domain\Project\Enums\ProjectStatus;
 use App\Domain\Project\Enums\ProjectVisibility;
 use App\Models\Project;
 use App\Models\User;
@@ -42,7 +43,9 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return $user->id === $project->client_id;
+        return $user->id === $project->client_id
+            && $project->status !== ProjectStatus::Completed
+            && $project->status !== ProjectStatus::Cancelled;
     }
 
     /**

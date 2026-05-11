@@ -22,15 +22,26 @@ Route::prefix('v1')->group(function () {
             ->name('api.v1.projects.store');
         Route::get('projects/{project:ulid}', [ProjectController::class, 'show'])
             ->name('api.v1.projects.show');
+        Route::patch('projects/{project:ulid}', [ProjectController::class, 'update'])
+            ->name('api.v1.projects.update');
+        Route::delete('projects/{project:ulid}', [ProjectController::class, 'destroy'])
+            ->name('api.v1.projects.destroy');
 
         /** Proposals */
         Route::get('projects/{project:ulid}/proposals', [ProposalController::class, 'index'])
             ->name('api.v1.projects.proposals.index');
+        Route::get('projects/{project:ulid}/proposals/{proposal:ulid}',
+            [ProposalController::class, 'show'])
+            ->name('api.v1.projects.proposals.show');
         Route::post('projects/{project:ulid}/proposals', [ProposalController::class, 'store'])
             ->name('api.v1.projects.proposals.store');
+        Route::patch('projects/{project:ulid}/proposals/{proposal:ulid}/withdraw',
+            [ProposalController::class, 'withdraw'])
+            ->name('api.v1.projects.proposals.withdraw');
         Route::patch('projects/{project:ulid}/proposals/{proposal:ulid}/accept', [ProposalController::class, 'accept'])
             ->name('api.v1.projects.proposals.accept');
-        Route::get('projects/{project:ulid}/my-proposals', [ProposalController::class, 'myProposals']);
+        Route::get('projects/{project:ulid}/my-proposals', [ProposalController::class, 'myProposals'])
+        ->name('api.v1.proposals.mine');
 
         /** Contracts */
         Route::get('contracts', [ContractController::class, 'index'])

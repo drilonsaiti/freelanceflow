@@ -3,6 +3,7 @@
 namespace App\Domain\Proposal\Policies;
 
 use App\Domain\Identity\Enums\UserRole;
+use App\Domain\Proposal\Enums\ProposalStatus;
 use App\Models\Project;
 use App\Models\Proposal;
 use App\Models\User;
@@ -28,5 +29,11 @@ class ProposalPolicy
     public function accept(User $user,Proposal $proposal): bool
     {
         return $user->id === $proposal->project->client_id;
+    }
+
+    public function withdraw(User $user,Proposal $proposal): bool
+    {
+        return $user->id === $proposal->project->client_id
+            && $proposal->status === ProposalStatus::Pending;
     }
 }
