@@ -3,13 +3,17 @@
 namespace App\Interfaces\Http\Controllers\Api\V1;
 
 use App\Application\Project\Actions\CreateProjectAction;
+use App\Application\Project\Actions\UpdateProjectAction;
 use App\Application\Project\Queries\GetOpenProjectsQuery;
 use App\Domain\Project\DTOs\CreateProjectDTO;
+use App\Domain\Project\DTOs\UpdateProjectDTO;
 use App\Http\Controllers\Controller;
 use App\Interfaces\Http\Requests\CreateProjectRequest;
+use App\Interfaces\Http\Requests\UpdateProjectRequest;
 use App\Interfaces\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 class ProjectController extends Controller
 {
@@ -43,6 +47,24 @@ class ProjectController extends Controller
             'data' => ProjectResource::make($result),
             'message' => 'Project created successfully'
         ],201);
+    }
+
+    public function update(UpdateProjectRequest $request,Project $project,UpdateProjectAction $updateProjectAction){
+        $this->authorize('update', [Project::class,$project]);
+
+        $result = $updateProjectAction->execute(UpdateProjectDTO::from($request->validated()),$project->id);
+
+        return response()->json([
+            'data' => ProjectResource::make($result),
+            'message' => 'Project updated successfully'
+        ]);
+    }
+
+    public function destroy(Project $project){
+        $this->authorize('delete', [Project::class,$project]);
+
+        $project->delete();
+        return response()->json(['message' => 'Project deleted successfully']);
     }
 
 }

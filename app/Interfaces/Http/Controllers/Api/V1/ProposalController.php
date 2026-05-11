@@ -4,6 +4,7 @@ namespace App\Interfaces\Http\Controllers\Api\V1;
 
 use App\Application\Proposal\Actions\AcceptProposalAction;
 use App\Application\Proposal\Actions\SubmitProposalAction;
+use App\Application\Proposal\Actions\WithdrawProposalAction;
 use App\Domain\Proposal\DTOs\AcceptProposalDTO;
 use App\Domain\Proposal\DTOs\CreateProposalDTO;
 use App\Domain\Proposal\DTOs\UpdateProposalStatusDTO;
@@ -45,9 +46,19 @@ class ProposalController
         ]);
     }
 
-    public function store(SubmitProposalRequest $request,Project $project,SubmitProposalAction $submitProposalAction)
+    public function show(Project $project, Proposal $proposal)
     {
-        $this->authorize('create',[Proposal::class,$project]);
+        $this->authorize('view', [Proposal::class, $project, $proposal]);
+
+        return response()->json([
+            'data' => ProposalResource::make($proposal),
+            'message' => 'Proposal retrieved successfully'
+        ]);
+    }
+
+    public function store(SubmitProposalRequest $request, Project $project, SubmitProposalAction $submitProposalAction)
+    {
+        $this->authorize('create', [Proposal::class, $project]);
 
         $result = $submitProposalAction->execute(CreateProposalDTO::from([
             ...$request->validated(),
@@ -58,14 +69,15 @@ class ProposalController
         return response()->json([
             'data' => ProposalResource::make($result),
             'message' => 'Proposal submitted successfully'
-        ],201);
+        ], 201);
     }
 
     public function accept(
-        Project $project,
-        Proposal $proposal,
+        Project              $project,
+        Proposal             $proposal,
         AcceptProposalAction $acceptProposalAction
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $this->authorize('accept', $proposal);
 
         $acceptProposalAction->execute(new AcceptProposalDTO(
@@ -75,4 +87,15 @@ class ProposalController
 
         return response()->json(['message' => 'Proposal accepted successfully']);
     }
+
+    public function withdraw(Project $project, Proposal $proposal,WithdrawProposalAction $withdrawProposalAction)
+    {
+        $this->authorize('withdraw', [Proposal::class, $project, $proposal]);
+
+        $withdrawProposalAction->execute($proposal);
+
+        return response()->json(['message' => 'Proposal withdrawn successfully']);
+
+    }
+
 }
