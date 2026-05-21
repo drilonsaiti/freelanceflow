@@ -2,16 +2,22 @@ import {useForm} from "react-hook-form";
 import {type RegisterFormData, registerSchema} from "../schemas/auth.schema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useRegister} from "../hooks/useRegister.ts";
+import {useNavigate} from "react-router-dom";
 
 function LoginForm() {
     const {register, handleSubmit, formState: {errors}} = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema)
     });
+    const navigate = useNavigate();
 
     const registerMutation = useRegister();
 
     const onSubmit = (data: RegisterFormData) => {
-        registerMutation.mutate(data);
+        registerMutation.mutate(data,{
+            onSuccess: () => {
+                navigate('/login');
+            }
+        });
     }
 
     return (
@@ -94,7 +100,7 @@ function LoginForm() {
             </div>
 
             <button type="submit"
-                    className="text-white bg-black p-2 rounded self-center cursor-pointer selft-center">Register
+                    className="w-full rounded-xl bg-black px-4 py-3 text-sm font-medium text-white transition hover:opacity-90">Register
             </button>
         </form>
 

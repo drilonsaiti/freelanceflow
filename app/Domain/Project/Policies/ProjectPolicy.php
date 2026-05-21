@@ -35,6 +35,7 @@ class ProjectPolicy
      */
     public function create(User $user): bool
     {
+        \Log::info(json_encode($user));
         return $user->role === UserRole::Client;
     }
 
