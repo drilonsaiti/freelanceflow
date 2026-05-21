@@ -1,3 +1,5 @@
+import type {Project} from "../../features/projects/types/project.types.ts";
+
 export interface ApiResponse<T> {
     data: T;
     message: string;
@@ -15,4 +17,10 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
         per_page: number;
         total: number;
     }
+}
+
+export interface ProjectsResponse {
+    data: Project[];
+    next_cursor: string | null;
+    prev_cursor: string | null;
 }

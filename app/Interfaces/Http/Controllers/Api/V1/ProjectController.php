@@ -19,11 +19,13 @@ class ProjectController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index(GetOpenProjectsQuery $getOpenProjectsQuery)
+    public function index(GetOpenProjectsQuery $getOpenProjectsQuery,Request $request)
     {
-        $projects = $getOpenProjectsQuery->handle();
+        $projects = $getOpenProjectsQuery->handle($request->query('cursor'));
         return response()->json([
-            'data' => ProjectResource::collection($projects),
+            'data' => ProjectResource::collection($projects->items()),
+            'next_cursor' => $projects->nextCursor()?->encode(),
+            'prev_cursor' => $projects->previousCursor()?->encode(),
             'message' => 'Projects retrieved successfully'
         ]);
     }
@@ -52,7 +54,7 @@ class ProjectController extends Controller
     public function update(UpdateProjectRequest $request,Project $project,UpdateProjectAction $updateProjectAction){
         $this->authorize('update', [Project::class,$project]);
 
-        $result = $updateProjectAction->execute(UpdateProjectDTO::from($request->validated()),$project->id);
+        $result = $updateProjectAction->execute($project,UpdateProjectDTO::from($request->validated()));
 
         return response()->json([
             'data' => ProjectResource::make($result),

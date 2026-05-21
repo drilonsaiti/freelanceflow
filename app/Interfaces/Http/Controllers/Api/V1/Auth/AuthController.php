@@ -21,7 +21,8 @@ final class AuthController
 
         return response()->json([
             'token' => $result->token,
-            'data' => new UserResource($result->user)
+            'data' => new UserResource($result->user),
+            'message' => 'User registered successfully'
         ],201);
     }
 
@@ -30,7 +31,8 @@ final class AuthController
 
         return response()->json([
             'token' => $result->token,
-            'data' => new UserResource($result->user)
+            'data' => new UserResource($result->user),
+            'message' => 'User logged in successfully'
         ]);
     }
 

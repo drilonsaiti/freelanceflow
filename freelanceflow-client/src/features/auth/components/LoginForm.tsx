@@ -54,7 +54,7 @@ function LoginForm() {
 
             <button type="submit"
                     disabled={loginMutation.isPending}
-                    className="text-white bg-black p-2 rounded selft-center cursor-pointer self-center">
+                    className="w-full rounded-xl bg-black px-4 py-3 text-sm font-medium text-white transition hover:opacity-90">
                 {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
             </button>
 

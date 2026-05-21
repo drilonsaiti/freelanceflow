@@ -2,8 +2,10 @@
 
 namespace App\Interfaces\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Number;
 
 final class ProjectResource extends JsonResource
 {
@@ -16,8 +18,8 @@ final class ProjectResource extends JsonResource
             'description' => $this->description,
 
             'budget' => [
-                'min' => $this->budget_min,
-                'max' => $this->budget_max,
+                'min' => $this->budget_min_formatted,
+                'max' => $this->budget_max_formatted,
             ],
 
             'status' => [
@@ -33,8 +35,9 @@ final class ProjectResource extends JsonResource
             'category' => $this->category,
             'required_skills' => $this->required_skills,
 
-            'deadline' => $this->deadline?->toDateString(),
-
+            'deadline' => $this->deadline
+                ? Carbon::parse($this->deadline)->format('d.m.Y')
+                : null,
             'client' => [
                 'id' => $this->client?->id,
                 'name' => $this->client?->name,

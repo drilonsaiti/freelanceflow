@@ -8,7 +8,7 @@ export const useLogin = () => {
     return useMutation({
         mutationFn: authApi.login,
         onSuccess: ({data}) => {
-            setAuth(data.data.data,data.data.token);
+            setAuth(data.data,data.token);
         }
     })
 };

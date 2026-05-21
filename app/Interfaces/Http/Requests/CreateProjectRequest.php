@@ -21,7 +21,7 @@ final class CreateProjectRequest extends FormRequest
             'status' => ['required', 'string', 'in:draft,open,in_progress,completed,cancelled'],
             'visibility' => ['required', 'string', 'in:public,private,invite_only'],
             'category' => ['nullable', 'string', 'max:190'],
-            'required_skills' => ['nullable', 'array'],
+            'requiredSkills' => ['nullable', 'array'],
             'deadline' => ['nullable', 'date'],
         ];
     }

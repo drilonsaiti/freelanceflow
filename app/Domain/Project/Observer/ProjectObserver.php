@@ -13,7 +13,7 @@ class ProjectObserver
     {
         if ($project->status === ProjectStatus::Open &&
             $project->visibility === ProjectVisibility::Public) {
-            Cache::forget('projects.open');
+            Cache::tags(['projects.open'])->flush();
         }
     }
 }

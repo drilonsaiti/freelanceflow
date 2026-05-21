@@ -5,12 +5,14 @@ namespace App\Models;
 use App\Domain\Project\Enums\ProjectStatus;
 use App\Domain\Project\Enums\ProjectVisibility;
 use App\Domain\Project\Observer\ProjectObserver;
+use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Number;
 
 #[ObservedBy([ProjectObserver::class])]
 class Project extends Model
@@ -39,6 +41,7 @@ class Project extends Model
         'deadline' => 'date'
     ];
 
+    protected $appends = ['budget_min_formatted', 'budget_max_formatted'];
 
     public function client(): BelongsTo
     {
@@ -72,5 +75,19 @@ class Project extends Model
     public function getRouteKeyName()
     {
         return 'ulid';
+    }
+
+    public function getBudgetMinFormattedAttribute(): ?string
+    {
+        if (!$this->budget_min) return null;
+
+        return Money::of($this->budget_min, 'USD')->formatTo('en_US');
+    }
+
+    public function getBudgetMaxFormattedAttribute(): ?string
+    {
+        if (!$this->budget_max) return null;
+
+        return Money::of($this->budget_max, 'USD')->formatTo('en_US');
     }
 }
